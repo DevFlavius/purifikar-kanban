@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customer {
+  id               String             @id(map: "customer_mapping_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome_fantasia    String?
+  razao_social     String?
+  cnpj             String?            @unique(map: "customer_mapping_cnpj_key") @db.VarChar(14)
+  omie_id          String?            @db.VarChar
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  customer_mapping customer_mapping[]
+}
+
+model customer_mapping {
+  id            String   @id(map: "customer_mapping_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customer_id   String   @db.Uuid
+  vtiger_id     String?
+  auvo_id       String?
+  omie_id       String?
+  omie_contract String?  @unique
+  omie_status   Boolean?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  customer      customer @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_customer")
+}
+
+model entity_mapping {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entity_type String
+  crm_id      String?   @db.VarChar(100)
+  auvo_id     String?   @db.VarChar(100)
+  omie_id     String?   @db.VarChar(100)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model production_orders {
+  id           BigInt    @id
+  id_produto   BigInt
+  cod_produto  String?   @db.VarChar(50)
+  nome_produto String?   @db.VarChar(255)
+  etapa        String?   @db.VarChar(10)
+  quant_total  Int?
+  op_num       String?   @db.VarChar(20)
+  dt_previsao  DateTime? @db.Date
+  componentes  Json?
+
+  @@map("production_orders")
+}
+
+model user_mapping {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  crm_id         String    @db.VarChar(100)
+  auvo_id        String?   @db.VarChar(100)
+  omie_id        String?   @db.VarChar(100)
+  nome           String    @db.VarChar(100)
+  email          String    @db.VarChar(100)
+  ativo          Boolean?  @default(true)
+  created_at     DateTime? @default(now()) @db.Timestamp(6)
+  updated_at     DateTime? @default(now()) @db.Timestamp(6)
+  nome_vtiger_ui String?   @db.VarChar(100)
+  jobtitle       String?   @db.VarChar(100)
+}

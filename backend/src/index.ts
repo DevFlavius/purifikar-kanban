@@ -1,13 +1,34 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';      // <-- novo
+import express from 'express';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-app.use(cors());              // <-- habilita CORS
+const PORT = process.env.PORT || 3001;
+
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('API online! 🚀');
+app.get('/', (_, res) => {
+  res.send('API do Painel de Produção está online.');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`⚡ Backend na porta ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
+
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  const todasOPs = await prisma.productionOrder.findMany();
+  console.log(todasOPs);
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
