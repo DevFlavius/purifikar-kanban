@@ -1,33 +1,39 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+import opRouter from './routes/op';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const prisma = new PrismaClient();
 
+// Middleware para interpretar JSON no corpo das requisições
 app.use(express.json());
 
+// Rotas da aplicação
+app.use('/op', opRouter);
+
+// Rota padrão para verificação
 app.get('/', (_, res) => {
   res.send('API do Painel de Produção está online.');
 });
 
+// Inicialização do servidor
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
+// Exemplo de chamada para verificar se o Prisma está funcionando
 async function main() {
-  const todasOPs = await prisma.productionOrder.findMany();
-  console.log(todasOPs);
+  const todasOPs = await prisma.production_orders.findMany();
+  console.log('Ordens de Produção encontradas:', todasOPs.length);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Erro ao acessar o banco de dados:', e);
   })
   .finally(async () => {
     await prisma.$disconnect();
