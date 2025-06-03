@@ -1,12 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import cors from 'cors';
 import opRouter from './routes/op';
 
 dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
+
+app.use(cors());
 
 // Middleware para interpretar JSON no corpo das requisições
 app.use(express.json());

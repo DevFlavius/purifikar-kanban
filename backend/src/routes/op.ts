@@ -26,17 +26,32 @@ router.get('/', async (_req: Request, res: Response) => {
   }
 });
 
-// GET /op/:id
-router.get('/:id', async (req, res) => {
-  try {
-    const op = await prisma.production_orders.findUnique({
-      where: { id: BigInt(req.params.id) }
-    });
-    res.json(op);
-  } catch (err) {
-    res.status(500).json({ erro: 'Erro ao buscar OP' });
+// GET /op/:id      (vamos corrigir agora)
+
+
+router.get(
+  '/:id',
+  async (
+    req: Request<{ id: string }, {}, {}, {}>,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const id = BigInt(req.params.id);
+      const op = await prisma.production_orders.findUnique({ where: { id } });
+
+      if (!op) {
+        res.status(404).json({ erro: 'OP não encontrada' });
+        return;
+      }
+
+      res.setHeader('Content-Type', 'application/json');
+      res.send(jsonWithBigInt({ ...op, id: op.id.toString() }));
+    } catch (err) {
+      console.error('Erro no GET /op/:id =>', err);
+      res.status(500).json({ erro: 'Erro ao buscar OP' });
+    }
   }
-});
+);
 
 type Params = { id: string };
 type Body = { etapa: string };
@@ -54,9 +69,13 @@ router.put(
         data: { etapa }
       });
 
-      res.json(atualizada);
+      res.json({
+      ...atualizada,
+      id: atualizada.id.toString() // ✅ converte o BigInt
+      });
     } catch (error) {
       res.status(500).json({ erro: 'Erro ao atualizar OP' });
+      console.error('Erro no PUT /op/:id =>', error);
     }
   }
 );
