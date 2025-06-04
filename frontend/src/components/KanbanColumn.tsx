@@ -1,6 +1,9 @@
 import React from 'react';
-import '../App.css';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Op } from '../types/Op';
+import DraggableCard from './DraggableCard';
+import '../style/App.css';
 
 export type KanbanColumnProps = {
   id: string;
@@ -9,27 +12,25 @@ export type KanbanColumnProps = {
   onCardClick: (op: Op) => void;
 };
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, items, onCardClick }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title, items, onCardClick }) => {
+  const { setNodeRef } = useDroppable({ id });
+
   return (
-    <div className="kanban-column">
+    <div className="kanban-column" ref={setNodeRef}>
       <div className="kanban-column-header">
         <h2 className="kanban-column-title">{title}</h2>
       </div>
-      <div className="kanban-items">
-        {items.map(op => (
-          <div
-            key={op.id}
-            className="kanban-card"
-            id={op.id}
-            onClick={() => onCardClick(op)}
-          >
-            <p><strong className="production-card-nome">{op.nome_produto}</strong></p>
-            <p className="production-card-codigo">OP: {op.op_num}</p>
-            <p className="production-card-quantidade">Qtd: {op.quant_total}</p>
-            <p className="production-card-observacao">Observação: {op.observacao}</p>
-          </div>
-        ))}
-      </div>
+      {/* ENVOLVE os itens com SortableContext */}
+      <SortableContext
+        items={items.map(op => op.id.toString())}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="kanban-items">
+          {items.map(op => (
+            <DraggableCard key={op.id} op={op} onCardClick={onCardClick} />
+          ))}
+        </div>
+      </SortableContext>
     </div>
   );
 };

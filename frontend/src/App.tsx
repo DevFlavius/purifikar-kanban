@@ -4,7 +4,8 @@ import KanbanColumn from './components/KanbanColumn';
 import { useFetchOps } from './hooks/useFetchOps';
 import type { Op } from './types/Op';
 import Header from './components/Header';
-import './App.css';
+import './style/App.css';
+import Modal from './components/Modal';
 
 const statusNames: Record<string, string> = {
   '10': 'nova',
@@ -19,7 +20,7 @@ const columns = ['nova', 'a_produzir', 'em_producao', 'acabamento', 'finalizado'
 function App() {
   const { ops, loading, setOps } = useFetchOps();
   const [selectedOp, setSelectedOp] = useState<Op | null>(null);
-
+  
   const groupedOps: Record<string, Op[]> = {
     nova: [],
     a_produzir: [],
@@ -49,7 +50,7 @@ function App() {
       );
     });
   };
-
+    console.log('selectedOp:', selectedOp);
   return (
     <div className="kanban-wrapper">
       <Header />
@@ -68,8 +69,11 @@ function App() {
           ))}
         </div>
       </DndContext>
+      {selectedOp && <Modal op={selectedOp} onClose={() => setSelectedOp(null)} />}
     </div>
   );
+
+
 }
 
 export default App;

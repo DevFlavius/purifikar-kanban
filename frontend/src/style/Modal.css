@@ -1,0 +1,110 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Modal Container */
+.modal-content {
+  background-color: #fff;
+  color: #333;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 520px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.modal-content h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
+  color: #111;
+}
+
+.modal-content p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Componentes Container */
+.modal-components {
+  background: linear-gradient(to right, #f4f4f4, #eaeaea);
+  padding: 1rem;
+  border-radius: 12px;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrollbar custom */
+.modal-components::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-components::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+}
+.modal-components::-webkit-scrollbar-track {
+  background-color: #e0e0e0;
+}
+
+.modal-components-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #222;
+}
+
+.modal-components-list {
+  list-style-type: disc;
+  font-size: 0.92rem;
+  color: #444;
+  margin-left: 1.25rem;
+  line-height: 1.4;
+}
+
+/* Botão Fechar */
+.modal-content button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.25rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
+}
+
+/* Animação FadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
