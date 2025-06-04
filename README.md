@@ -1,11 +1,7 @@
-Claro! Com base em tudo que discutimos, aqui está um modelo completo e profissional de `README.md` para o seu projeto Kanban de Produção da Purifikar, com backend em Node.js + Prisma e frontend em React com drag-and-drop usando DnD Kit.
-
----
-
 ```markdown
 # 🏭 Painel de Produção - Purifikar
 
-Este é um sistema de **Kanban Web** desenvolvido para acompanhar em tempo real a produção da indústria **Via Essência (Grupo Purifikar)**. Ele permite o acompanhamento de Ordens de Produção (OPs) em diferentes etapas de fabricação, integrando com a API da Omie e oferecendo um painel visual interativo com drag and drop.
+Este é um sistema de **Kanban Web** desenvolvido para acompanhar em tempo real a produção da indústria **IPF (Grupo Purifikar)**. Ele permite o acompanhamento de Ordens de Produção (OPs) em diferentes etapas de fabricação, integrando com a API da Omie e oferecendo um painel visual interativo com drag and drop.
 
 ---
 
