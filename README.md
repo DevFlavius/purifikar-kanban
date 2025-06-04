@@ -101,7 +101,7 @@ docker-compose up --build
 ---
 
 ### 📡 Webhook Omie
-Ao receber um número de OP via webhook da Omie, o backend busca os dados da OP completa e insere ou atualiza no banco. A tabela **production_orders** é usada como base para exibir no frontend.
+Ao receber um número de OP via webhook da Omie, o backend busca os dados da OP completa e insere ou atualiza no banco. A tabela `production_orders` é usada como base para exibir no frontend.
 
 ---
 
