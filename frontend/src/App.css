@@ -6,15 +6,23 @@
 
 .kanban-header {
   display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 8px;
   background: linear-gradient(to right, #000000, #1a1a1a);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.kanban-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  flex-grow: 1;
+  text-align: center;
+}
+
 .kanban-logo {
   height: 40px;
+  float: left;
+  margin-right: 10px;
 }
 
 .kanban-columns {
