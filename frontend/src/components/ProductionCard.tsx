@@ -1,4 +1,5 @@
 import React from 'react';
+import '../App.css';
 
 interface ProductionCardProps {
   nome: string;
@@ -16,12 +17,12 @@ const ProductionCard: React.FC<ProductionCardProps> = ({
   observacao
 }) => {
   return (
-    <div className="bg-gray-100 border border-gray-300 rounded-lg p-3 mb-3 shadow hover:shadow-lg transition">
-      <p className="font-bold">{nome}</p>
-      <p className="text-sm">Modelo: {modelo}</p>
-      <p className="text-xs text-gray-600">Cód: {codigo}</p>
-      <p className="text-text-sm font-medium">Qtd: {quantidade}</p>
-      {observacao && <p className="text-xs text-red-600 font-bold mt-1">Obs: {observacao}</p>}
+    <div className="production-card">
+      <p className="production-card-nome">{nome}</p>
+      <p className="production-card-modelo">Modelo: {modelo}</p>
+      <p className="production-card-codigo">Cód: {codigo}</p>
+      <p className="production-card-quantidade">Qtd: {quantidade}</p>
+      {observacao && <p className="production-card-observacao">Obs: {observacao}</p>}
     </div>
   );
 };

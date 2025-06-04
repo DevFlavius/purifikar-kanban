@@ -1,4 +1,106 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.kanban-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
+.kanban-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: linear-gradient(to right, #000000, #1a1a1a);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.kanban-logo {
+  height: 40px;
+}
+
+.kanban-columns {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: #1a1a1a;
+}
+
+.kanban-column {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 17rem;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.kanban-column-title {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  
+}
+
+.kanban-column-header {
+  background: linear-gradient(to right, #000000, #333333);
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;    
+  width: 250px;
+  height: 50px;
+  padding-bottom: 0.5rem;
+  
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+/* Css para os cards */
+
+.production-card {
+  background-color: #f7fafc; 
+  border: 1px solid #d1d5db; 
+  border-radius: 0.5rem; 
+  padding: 0.75rem; 
+  margin-bottom: 0.75rem; 
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+  width: 250px;
+  
+}
+
+.production-card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); 
+}
+
+.production-card-nome {
+  font-weight: bold;
+}
+
+.production-card-modelo {
+  font-size: 0.875rem; 
+}
+
+.production-card-codigo {
+  font-size: 0.75rem; 
+  color: #4b5563; 
+}
+
+.production-card-quantidade {
+  font-size: 0.875rem; 
+  font-weight: 500; 
+}
+
+.production-card-observacao {
+  font-size: 0.75rem; 
+  color: #dc2626; 
+  font-weight: bold;
+  margin-top: 0.25rem;
+}

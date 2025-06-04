@@ -2,24 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    color: white;
-    background: linear-gradient(to right, rgb(0, 49, 194), rgb(0, 89, 255));
-
-  }
-
-  body {
-    @apply min-h-screen m-0 p-0 bg-transparent;
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  }
-
-  #root {
-    @apply p-0 m-0 bg-transparent;
-  }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background: linear-gradient(to bottom, rgb(0, 49, 194), rgb(0, 89, 255));
+  color: rgba(255, 255, 255, 0.87);
+  min-height: 100vh;
 }
