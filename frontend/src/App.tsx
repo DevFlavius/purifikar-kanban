@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import KanbanColumn from './components/KanbanColumn';
 import { useFetchOps } from './hooks/useFetchOps';
@@ -18,7 +18,7 @@ const statusNames: Record<string, string> = {
 const columns = ['nova', 'a_produzir', 'em_producao', 'acabamento', 'finalizado'];
 
 function App() {
-  const { ops, loading, setOps } = useFetchOps();
+  const { ops, setOps } = useFetchOps();
   const [selectedOp, setSelectedOp] = useState<Op | null>(null);
   
   const groupedOps: Record<string, Op[]> = {
