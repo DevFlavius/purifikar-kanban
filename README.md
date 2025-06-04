@@ -1,7 +1,6 @@
-```markdown
 # 🏭 Painel de Produção - Purifikar
 
-Este é um sistema de **Kanban Web** desenvolvido para acompanhar em tempo real a produção da indústria **IPF (Grupo Purifikar)**. Ele permite o acompanhamento de Ordens de Produção (OPs) em diferentes etapas de fabricação, integrando com a API da Omie e oferecendo um painel visual interativo com drag and drop.
+Este é um sistema de **Kanban Web** desenvolvido para acompanhar em tempo real a produção da indústria **IPF industria (Grupo Purifikar)**. Ele permite o acompanhamento de Ordens de Produção (OPs) em diferentes etapas de fabricação, integrando com a API da Omie e oferecendo um painel visual interativo com drag and drop.
 
 ---
 
@@ -56,34 +55,6 @@ Este é um sistema de **Kanban Web** desenvolvido para acompanhar em tempo real 
 
 ---
 
-## 📁 Estrutura do Projeto
-
-```
-
-purifikar-kanban/
-├── backend/
-│   ├── prisma/
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   └── main.ts
-│   └── Dockerfile
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── types/
-│   │   └── App.tsx
-│   └── index.html
-│
-└── docker-compose.yml
-
-````
-
----
-
 ## ⚙️ Como Rodar Localmente
 
 ### 1. Clone o repositório
@@ -91,7 +62,8 @@ purifikar-kanban/
 ```bash
 git clone https://github.com/seu-usuario/purifikar-kanban.git
 cd purifikar-kanban
-````
+```
+---
 
 ### 2. Configure o backend
 
@@ -105,6 +77,8 @@ npm install
 npm run dev
 ```
 
+---
+
 ### 3. Configure o frontend
 
 ```bash
@@ -112,48 +86,22 @@ cd ../frontend
 npm install
 npm run dev
 ```
+---
 
 ### 4. Acesse
-
-Abra [http://localhost:5173](http://localhost:5173) no navegador.
+Abra http://localhost:5173 no navegador.
 
 ---
 
-## 🐳 Docker (opcional)
-
+### 🐳 Docker (opcional)
 Se desejar rodar tudo com Docker:
-
 ```bash
 docker-compose up --build
 ```
+---
+
+### 📡 Webhook Omie
+Ao receber um número de OP via webhook da Omie, o backend busca os dados da OP completa e insere ou atualiza no banco. A tabela **production_orders** é usada como base para exibir no frontend.
 
 ---
 
-## 📡 Webhook Omie
-
-Ao receber um número de OP via webhook da Omie, o backend busca os dados da OP completa e insere ou atualiza no banco. A tabela `production_orders` é usada como base para exibir no frontend.
-
----
-
-## 📸 Captura de Tela
-
-![screenshot](./docs/kanban-preview.png)
-
----
-
-## 🙋‍♂️ Contribuição
-
-Sinta-se à vontade para abrir Issues ou Pull Requests. Todo feedback é bem-vindo!
-
----
-
-## 🛡️ Licença
-
-Este projeto é privado e exclusivo para uso interno da Purifikar / Via Essência.
-
-```
-
----
-
-Se quiser, posso também gerar esse `README.md` como arquivo `.md` pronto para commit. Deseja isso?
-```
