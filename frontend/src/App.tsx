@@ -1,36 +1,75 @@
-import KanbanColumn from './components/KanbanColumn'
-import ProductionCard from './components/ProductionCard'
+import React, { useState } from 'react';
+import { DndContext } from '@dnd-kit/core';
+import KanbanColumn from './components/KanbanColumn';
+import { useFetchOps } from './hooks/useFetchOps';
+import type { Op } from './types/Op';
+import Header from './components/Header';
+import './App.css';
 
+const statusNames: Record<string, string> = {
+  '10': 'nova',
+  '15': 'a_produzir',
+  '20': 'em_producao',
+  '30': 'acabamento',
+  '60': 'finalizado',
+};
+
+const columns = ['nova', 'a_produzir', 'em_producao', 'acabamento', 'finalizado'];
 
 function App() {
+  const { ops, loading, setOps } = useFetchOps();
+  const [selectedOp, setSelectedOp] = useState<Op | null>(null);
+
+  const groupedOps: Record<string, Op[]> = {
+    nova: [],
+    a_produzir: [],
+    em_producao: [],
+    acabamento: [],
+    finalizado: [],
+  };
+
+    ops.forEach(op => {
+      const etapaKey = statusNames[String(op.etapa)];
+      if (etapaKey) groupedOps[etapaKey].push(op);
+    });
+
+  const handleDragEnd = (opId: string, newStatus: string) => {
+    const etapaCode = Object.keys(statusNames).find(key => statusNames[key] === newStatus);
+    if (!etapaCode) return;
+
+    fetch(`http://localhost:3001/op/${opId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ etapa: etapaCode })
+    }).then(() => {
+      setOps(prev =>
+        prev.map(op =>
+          op.id === opId ? { ...op, etapa: etapaCode } : op
+        )
+      );
+    });
+  };
+
   return (
     <div className="kanban-wrapper">
-      <header className="kanban-header">
-        <img
-          src="https://purifikar.com.br/wp-content/uploads/2023/07/logo-pfk-R-hotizontal-branca.png"
-          alt="Logo Purifikar"
-          className="kanban-logo"
-        />
-      </header>
-
-      <main className="kanban-columns">
-        <KanbanColumn title="OP Novas">
-          <ProductionCard
-            nome="Sabonete Flor de Laranjeira"
-            modelo="Vidro 250ml"
-            codigo="SB001"
-            quantidade={120}
-            observacao="Urgente"
-          />
-        </KanbanColumn>
-
-        <KanbanColumn title="A Produzir" />
-        <KanbanColumn title="Ordem em Produção" />
-        <KanbanColumn title="Finalizando Acabamento" />
-        <KanbanColumn title="Finalizado" />
-      </main>
+      <Header />
+      <DndContext onDragEnd={({ active, over }) => {
+        if (over && active.id !== over.id) handleDragEnd(String(active.id), String(over.id));
+      }}>
+        <div className="kanban-columns">
+          {columns.map(col => (
+            <KanbanColumn
+              key={col}
+              id={col}
+              title={col.replace('_', ' ').toUpperCase()}
+              items={groupedOps[col]}
+              onCardClick={setSelectedOp}
+            />
+          ))}
+        </div>
+      </DndContext>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
