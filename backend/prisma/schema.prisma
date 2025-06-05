@@ -46,10 +46,11 @@ model production_orders {
   id_produto   BigInt
   cod_produto  String?   @db.VarChar(50)
   nome_produto String?   @db.VarChar(255)
-  etapa        String?   @db.VarChar(20)
+  etapa        Int?   
   quant_total  Int?
   op_num       String?   @db.VarChar(20)
   dt_previsao  DateTime? @db.Date
+  observacao   String?   @db.Text
   componentes  Json?
 
   @@map("production_orders")

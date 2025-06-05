@@ -54,7 +54,7 @@ router.get(
 );
 
 type Params = { id: string };
-type Body = { etapa: string };
+type Body = { etapa: Number };
 
 // PUT /op/:id/status
 router.put(
@@ -66,16 +66,13 @@ router.put(
 
       const atualizada = await prisma.production_orders.update({
         where: { id: BigInt(id) },
-        data: { etapa }
+        data: { etapa: Number(etapa) }, // Certifica que é número
       });
+      res.send(jsonWithBigInt(atualizada));
 
-      res.json({
-      ...atualizada,
-      id: atualizada.id.toString() // ✅ converte o BigInt
-      });
     } catch (error) {
-      res.status(500).json({ erro: 'Erro ao atualizar OP' });
       console.error('Erro no PUT /op/:id =>', error);
+      res.status(500).json({ erro: 'Erro ao atualizar OP' });
     }
   }
 );
