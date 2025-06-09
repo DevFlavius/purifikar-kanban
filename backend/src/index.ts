@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import opRouter from './routes/op';
+import webhookRoutes from './routes/webhook';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Rotas da aplicação
 app.use('/op', opRouter);
+app.use('/webhook', webhookRoutes);
 
 // Rota padrão para verificação
 app.get('/', (_, res) => {

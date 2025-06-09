@@ -2,7 +2,6 @@ import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { jsonWithBigInt } from '../utils/json';
-import { RequestHandler } from 'express';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -27,7 +26,6 @@ router.get('/', async (_req: Request, res: Response) => {
 });
 
 // GET /op/:id      (vamos corrigir agora)
-
 
 router.get(
   '/:id',
