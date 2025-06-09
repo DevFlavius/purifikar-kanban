@@ -14,8 +14,8 @@ router.post(
   ): Promise<void> => {
     try {
       const payload = req.body;
-      const input = payload.inputG?.identificacao;
-      const codProduto = input?.nCodProd;
+      const input = payload.event;
+      const codProduto = input.nCodProd;
 
       const produto = produtos.find(p => p.ident.idProduto === codProduto);
 
@@ -26,14 +26,14 @@ router.post(
       }
 
       const dadosFormatados = {
-        id: Number(payload.inputG.identificacao.nCodOP),
+        id: Number(input.nCodOP),
         id_produto: produto.ident.idProduto,
         cod_produto: produto.ident.codProduto,
         nome_produto: produto.ident.descrProduto,
-        etapa: Number(payload.inputG.infAdicionais.cEtapa),
-        quant_total: Number(payload.inputG.identificacao.nQtde ?? 1),
-        op_num: payload.inputG.identificacao.cNumOP,
-        dt_previsao: new Date(formatarData(payload.inputG.identificacao.dDtPrevisao)),
+        etapa: Number(input.cEtapa),
+        quant_total: Number(input.nQtde ?? 1),
+        op_num: input.cNumOP,
+        dt_previsao: new Date(formatarData(input.dDtPrevisao)),
         componentes: JSON.stringify(
           produto.itens.map(item => ({
             nome: item.descrProdMalha,
@@ -43,6 +43,7 @@ router.post(
         )
       };
 
+      console.log({dadosFormatados});
       await prisma.production_orders.create({ data: dadosFormatados });
 
       res.status(200).json({ status: 'ok' });
