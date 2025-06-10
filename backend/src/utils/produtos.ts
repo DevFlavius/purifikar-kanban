@@ -1,5 +1,59 @@
-const produtos = [ 
-          {
+const produtos = {
+    ativo: [
+        "FIL-WD-ST",
+        "FIL-WD-SL",
+        "WC-ST04-T-B-D",
+        "WC-ST04-S-B-E",
+        "WC-ST04-T-B-E",
+        "WC-SL01-S-B-D",
+        "WC-SL-TM-DR",
+        "WC-ST04-S-I-D",
+        "WC-ST04-D-I-D",
+        "WC-ST04-D-I-E",
+        "WC-ST04-D-B-D",
+        "WC-ST04-D-B-E",
+        "WC-ST04-S-I-E",
+        "WC-ST04-T-I-D",
+        "WC-ST04-T-I-E",
+        "WC-SL01-S-B-E",
+        "WC-SL01-T-B-E",
+        "WC-ST04-S-B-D-HU",
+        "WC-ST04-S-B-D",
+        "WC-ST04-S-B-E-H",
+        "WC-ST04-S-I-D-H",
+        "WC-ST04-S-I-E-H",
+        "WC-ST04-S-B-E-HU",
+        "WC-ST04-S-I-D-HU",
+        "WC-ST04-S-I-E-HU",
+        "WC-ST04-T-B-D-H",
+        "WC-ST04-T-B-E-H",
+        "WC-ST04-T-B-E-HU",
+        "WC-ST04-T-B-D-HU",
+        "WC-ST04-T-I-D-HPC",
+        "WC-ST04-T-I-E-H",
+        "WC-ST04-T-I-D-HU",
+        "WC-ST04-T-I-E-HU",
+        "WC-SL01-D-B-E",
+        "WC-SL01-D-B-D",
+        "WC SP",
+        "3103",
+        "WC-ST04-S-P-D",
+        "WC-ST04-S-P-E",
+        "PRD00259",
+        "PRD00262",
+        "PRD00263",
+        "PRD00269",
+        "PRD00270",
+        "PRD00271",
+        "PRD00272",
+        "PRD00273",
+        "PRD00274",
+        "PRD00275",
+        "PRD00276",
+        "ST05-S-I-D"
+    ],        
+    mapping: [
+  {
             "custoProducao": {
               "vGGF": 0,
               "vMOD": 0
@@ -75989,8 +76043,10 @@ const produtos = [
             ],
             "observacoes": {}
           }
-      
-];
+  ]    
+};
+
+
 
 function formatarData(dataBR: string): string {
   const [dia, mes, ano] = dataBR.split('/');

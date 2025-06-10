@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { produtos, formatarData } from '../utils/produtos';
 import { PrismaClient } from '@prisma/client';
-import { jsonWithBigInt } from '../utils/json';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -9,16 +8,24 @@ const router = Router();
 router.post(
   '/',
   async (
-    req: Request<{}, {}, any, {}>, // <- Corrigido aqui
+    req: Request<{}, {}, any, {}>,
     res: Response
   ): Promise<void> => {
     try {
       const payload = req.body;
       const input = payload.event;
       const codProduto = input.nCodProd;
-
-      const produto = produtos.find(p => p.ident.idProduto === codProduto);
-
+      const codProdutoRecebido = input.nCodProd;
+      
+      if (!produtos.ativo.includes(codProdutoRecebido)) {
+        console.log('Produto inativo, ignorando...');
+        console.log(codProdutoRecebido);
+        res.status(200).send('Produto inativo');
+        return;
+      }
+      
+      const produto = produtos.mapping.find(p => p.ident.idProduto === codProduto);
+      
       if (!produto) {
         console.log('Produto não mapeado:', codProduto);
         res.status(204).send();
@@ -44,7 +51,17 @@ router.post(
       };
 
       console.log({dadosFormatados});
-      await prisma.production_orders.create({ data: dadosFormatados });
+      await prisma.production_orders.upsert({
+  where: {
+    id: dadosFormatados.id, // valor único
+  },
+  update: {
+    ...dadosFormatados,
+  },
+  create: {
+    ...dadosFormatados,
+  },
+});
 
       res.status(200).json({ status: 'ok' });
     } catch (error) {
