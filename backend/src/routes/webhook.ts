@@ -15,14 +15,27 @@ router.post(
       const payload = req.body;
       const input = payload.event;
       const codProduto = input.nCodProd;
-      
+      const nCodOp = input.nCodOP;
       const ProdOrdType = payload.topic;
-      console.log('Payload recebido:', ProdOrdType);
-      
+
+      //Procura o produto nos mapping de produtos, com base no código do produto
       const produto = produtos.mapping.find(p => p.ident.idProduto === codProduto);
-      
+      //define o codigo do produto pelo ID do produto encontrado
       const codProdutoRecebido = produto?.ident.codProduto;
 
+      // verifica o tipo de operação e se for de exclusão, remove a ordem de produção
+      if (ProdOrdType === "OrdemProducao.Excluida") {
+        console.log('Ordem de produção excluída');
+        await prisma.production_orders.delete({
+          where: {
+            id: nCodOp, // valor único
+          },
+        });
+        res.status(200).send('Ordem de produção excluída');
+        return;
+      }
+      
+      // verifica se o produto está ativo, filtro de produtos inativos
       if (!produtos.ativo.includes(String(codProdutoRecebido))) {
         console.log('Produto inativo, ignorando...');
         console.log(codProdutoRecebido);
@@ -30,13 +43,14 @@ router.post(
         return;
       }
       
-      
+      // verifica se o produto está mapeado, se não estiver, retorna 204
       if (!produto) {
         console.log('Produto não mapeado:', codProduto);
         res.status(204).send();
         return;
       }
 
+      // formata os dados para salvar no banco
       const dadosFormatados = {
         id: Number(input.nCodOP),
         id_produto: produto.ident.idProduto,
@@ -55,7 +69,7 @@ router.post(
         
       };
 
-      console.log({dadosFormatados});
+      //inclui ou atualiza a ordem de produção no banco
       await prisma.production_orders.upsert({
           where: {
             id: dadosFormatados.id, // valor único
