@@ -69,3 +69,20 @@ model user_mapping {
   nome_vtiger_ui String?   @db.VarChar(100)
   jobtitle       String?   @db.VarChar(100)
 }
+
+model integration_logs {
+  uuid       String   @id @default(uuid()) @db.Uuid
+  created_at DateTime @default(now())
+  origem     String
+  payload    Json
+  status     Status
+  response   String?    // Resposta da API (erro, etc.)
+  contexto   String?    // Comentários adicionais
+  foreign_id String?
+}
+
+enum Status {
+  sucesso
+  erro
+  reprocessado
+}
