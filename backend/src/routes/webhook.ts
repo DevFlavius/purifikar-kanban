@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { produtos, formatarData } from '../utils/produtos';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, IntegrationStatus } from '@prisma/client';
+import { atualizarLogIntegracao, criarLogIntegracao } from '../utils/log-register'
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -18,10 +19,19 @@ router.post(
       const nCodOp = input.nCodOP;
       const ProdOrdType = payload.topic;
 
+
       //Procura o produto nos mapping de produtos, com base no código do produto
       const produto = produtos.mapping.find(p => p.ident.idProduto === codProduto);
       //define o codigo do produto pelo ID do produto encontrado
       const codProdutoRecebido = produto?.ident.codProduto;
+
+      await criarLogIntegracao({
+        origem: 'kanban-PFK-webhook',
+        payload: req.body,
+        foreign_id: payload.messageid,
+        contexto: 'Recebendo dados de OP',
+        status: IntegrationStatus.EM_PROCESSO
+      })
 
       // verifica o tipo de operação e se for de exclusão, remove a ordem de produção
       if (ProdOrdType === "OrdemProducao.Excluida") {
@@ -31,7 +41,13 @@ router.post(
             id: nCodOp, // valor único
           },
         });
+        await atualizarLogIntegracao({
+          foreign_id: payload.messageid,
+          status: IntegrationStatus.SUCESSO,
+          contexto: 'Exclusão de Ordem de produção'
+        });
         res.status(200).send('Ordem de produção excluída');
+
         return;
       }
       

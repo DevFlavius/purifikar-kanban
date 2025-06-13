@@ -75,14 +75,14 @@ model integration_logs {
   created_at DateTime @default(now())
   origem     String
   payload    Json
-  status     Status
+  status     IntegrationStatus
   response   String?    // Resposta da API (erro, etc.)
   contexto   String?    // Comentários adicionais
-  foreign_id String?
+  foreign_id String?  @unique
 }
 
-enum Status {
-  sucesso
-  erro
-  reprocessado
+enum IntegrationStatus {
+  EM_PROCESSO
+  ERRO
+  SUCESSO
 }
