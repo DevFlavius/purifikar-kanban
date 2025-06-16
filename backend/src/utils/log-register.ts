@@ -11,6 +11,7 @@ type CriarLogParams = {
   payload: any
   foreign_id: string
   contexto?: string
+  status: IntegrationStatus
 }
 
 type AtualizarLogParams = {
@@ -25,7 +26,8 @@ export async function criarLogIntegracao({
   origem,
   payload,
   foreign_id,
-  contexto
+  contexto,
+  status
 }: CriarLogParams) {
   try {
     const log = await prisma.integration_logs.upsert({
@@ -33,7 +35,8 @@ export async function criarLogIntegracao({
       update: {
         origem,
         payload,
-        contexto
+        contexto,
+        status
       },
       create: {
         origem,

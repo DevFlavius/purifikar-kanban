@@ -41,13 +41,8 @@ router.post(
             id: nCodOp, // valor único
           },
         });
-        await atualizarLogIntegracao({
-          foreign_id: payload.messageid,
-          status: IntegrationStatus.SUCESSO,
-          contexto: 'Exclusão de Ordem de produção'
-        });
+        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-Exclusao', foreign_id: payload.messageid, contexto: 'Exclusão de Ordem de produção', status: IntegrationStatus.SUCESSO });
         res.status(200).send('Ordem de produção excluída');
-
         return;
       }
       
@@ -55,6 +50,7 @@ router.post(
       if (!produtos.ativo.includes(String(codProdutoRecebido))) {
         console.log('Produto inativo, ignorando...');
         console.log(codProdutoRecebido);
+        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-inativo', foreign_id: payload.messageid, contexto: 'Produto inativo, ignorando...', status: IntegrationStatus.SUCESSO });
         res.status(200).send('Produto inativo');
         return;
       }
@@ -62,6 +58,7 @@ router.post(
       // verifica se o produto está mapeado, se não estiver, retorna 204
       if (!produto) {
         console.log('Produto não mapeado:', codProduto);
+        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-NaoMapeado', foreign_id: payload.messageid, contexto: 'produto não mapeado', status: IntegrationStatus.ERRO });
         res.status(204).send();
         return;
       }
@@ -97,10 +94,11 @@ router.post(
             ...dadosFormatados,
           },
       });
-
+      await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-IncuidaNoBanco', foreign_id: payload.messageid, contexto: 'OS registrada no banco', status: IntegrationStatus.SUCESSO });
       res.status(200).json({ status: 'ok' });
     } catch (error) {
       console.error('Erro no webhook:', error);
+      await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-Erro', foreign_id: req.body.messageid, contexto: 'Erro ao processar webhook', status: IntegrationStatus.ERRO });
       res.status(500).json({ erro: 'Erro ao processar webhook' });
     }
   }
