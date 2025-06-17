@@ -65,7 +65,6 @@ export async function atualizarLogIntegracao({
     const log = await prisma.integration_logs.updateMany({
       where: {
         foreign_id,
-        origem
       },
       data: {
         status,

@@ -18,7 +18,7 @@ router.post(
       const codProduto = input.nCodProd;
       const nCodOp = input.nCodOP;
       const ProdOrdType = payload.topic;
-
+      console.log('message id', req.body.messageId);
 
       //Procura o produto nos mapping de produtos, com base no código do produto
       const produto = produtos.mapping.find(p => p.ident.idProduto === codProduto);
@@ -28,7 +28,7 @@ router.post(
       await criarLogIntegracao({
         origem: 'kanban-PFK-webhook',
         payload: req.body,
-        foreign_id: payload.messageid,
+        foreign_id: req.body.messageId,
         contexto: 'Recebendo dados de OP',
         status: IntegrationStatus.EM_PROCESSO
       })
