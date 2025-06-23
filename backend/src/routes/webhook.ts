@@ -62,7 +62,10 @@ router.post(
         res.status(204).send();
         return;
       }
-
+      const dataFormatada = formatarData(input.dDtPrevisao);
+      // verifica se tem data de previsão, se não tiver define como undefined
+      const dt_previsao_final = dataFormatada ? new Date(dataFormatada) : null;
+      
       // formata os dados para salvar no banco
       const dadosFormatados = {
         id: Number(input.nCodOP),
@@ -72,7 +75,7 @@ router.post(
         etapa: Number(input.cEtapa),
         quant_total: Number(input.nQtde ?? 1),
         op_num: input.cNumOP,
-        dt_previsao: new Date(formatarData(input.dDtPrevisao)),
+        dt_previsao: dt_previsao_final,
         componentes:
           produto.itens.map(item => ({
             nome: item.descrProdMalha,

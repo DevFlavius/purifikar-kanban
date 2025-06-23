@@ -76046,11 +76046,27 @@ const produtos = {
   ]    
 };
 
+function formatarData(dataBR: string | null | undefined): string | undefined {
+  // Retorna undefined se a data for nula, indefinida ou uma string vazia.
+  if (!dataBR || dataBR.trim() === "") {
+    return undefined;
+  }
+ 
+  const partes = dataBR.split('/');
+  // Valida se a data tem as 3 partes (dia, mês, ano).
+  if (partes.length !== 3) {
+    return undefined;
+  }
 
+  const [dia, mes, ano] = partes;
 
-function formatarData(dataBR: string): string {
-  const [dia, mes, ano] = dataBR.split('/');
+  // Valida se todas as partes existem e se o ano tem 4 dígitos.
+  if (!dia || !mes || !ano || ano.length !== 4) {
+    return undefined;
+  }
+ 
   return `${ano}-${mes}-${dia}`;
 }
+
 
 export { produtos, formatarData };
