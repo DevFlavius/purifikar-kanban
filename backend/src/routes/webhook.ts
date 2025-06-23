@@ -2,6 +2,8 @@ import { Request, Response, Router } from 'express';
 import { produtos, formatarData } from '../utils/produtos';
 import { PrismaClient, IntegrationStatus } from '@prisma/client';
 import { atualizarLogIntegracao, criarLogIntegracao } from '../utils/log-register'
+import { consultarOrdemProducao } from '../utils/OmieGetObs';
+import { string } from 'zod';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -62,6 +64,17 @@ router.post(
         res.status(204).send();
         return;
       }
+      
+      let observacao: string | null = null;
+      
+    try {
+        observacao = await consultarOrdemProducao(input.nCodOP);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Erro ao consultar a ordem de produção na Omie:', input.nCodOP, errorMessage);
+      await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-inativo', foreign_id: payload.messageid, contexto: 'Observação não encontrada', status: IntegrationStatus.SUCESSO });
+    }
+  
       const dataFormatada = formatarData(input.dDtPrevisao);
       // verifica se tem data de previsão, se não tiver define como undefined
       const dt_previsao_final = dataFormatada ? new Date(dataFormatada) : null;
@@ -76,6 +89,7 @@ router.post(
         quant_total: Number(input.nQtde ?? 1),
         op_num: input.cNumOP,
         dt_previsao: dt_previsao_final,
+        observacao: observacao || '',
         componentes:
           produto.itens.map(item => ({
             nome: item.descrProdMalha,
