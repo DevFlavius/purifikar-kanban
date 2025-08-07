@@ -1,54 +1,57 @@
-# React + TypeScript + Vite
+# Frontend - Purifikar Kanban
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este diretório contém o código-fonte do frontend da aplicação Purifikar Kanban, responsável pela interface de usuário interativa e visualização das Ordens de Produção.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **React + TypeScript**: Biblioteca JavaScript para construir interfaces de usuário, combinada com TypeScript para adicionar tipagem estática, resultando em um código mais robusto e fácil de manter.
+*   **Vite**: Uma ferramenta de build de frontend de próxima geração que oferece uma experiência de desenvolvimento extremamente rápida, com hot module replacement (HMR) instantâneo.
+*   **DnD Kit (`@dnd-kit/core`, `@dnd-kit/sortable`)**: Uma biblioteca de arrastar e soltar moderna, leve e acessível para React. Utilizada para implementar a funcionalidade de drag and drop das Ordens de Produção entre as colunas do Kanban.
+*   **TailwindCSS (parcial)**: Um framework CSS 
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+utilitário que permite construir designs personalizados rapidamente, utilizado de forma parcial para estilização.
+*   **CSS customizado**: Além do TailwindCSS, há estilos CSS personalizados para componentes específicos, como cards e modais, e para garantir a responsividade da interface em diferentes tamanhos de tela.
+*   **Axios**: Cliente HTTP baseado em Promises para o navegador e Node.js, utilizado para fazer requisições assíncronas ao backend da aplicação.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 🧩 Funcionalidades do Frontend
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+*   **Painel Kanban Interativo**: Exibe as Ordens de Produção em 5 colunas distintas (`Nova`, `A Produzir`, `Em Produção`, `Acabamento`, `Finalizado`), representando as etapas do fluxo de trabalho.
+*   **Drag and Drop de OPs**: Permite que os usuários arrastem e soltem as Ordens de Produção entre as colunas, atualizando seu status de forma visual e intuitiva.
+*   **Modal de Detalhes da OP**: Ao clicar em uma Ordem de Produção, um modal é exibido com informações detalhadas sobre a OP, incluindo componentes, observações e outros dados relevantes.
+*   **Design Responsivo**: A interface é otimizada para funcionar em diversos dispositivos e tamanhos de tela, proporcionando uma experiência de usuário consistente.
+*   **Animações Suaves**: Elementos visuais com animações para uma experiência de usuário mais fluida e agradável.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Como Rodar Localmente
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1.  **Navegue até o diretório do frontend:**
+    ```bash
+    cd purifikar-kanban/frontend
+    ```
+
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    ```
+
+3.  **Inicie o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    ```
+    O frontend estará acessível em `http://localhost:5173` (ou outra porta que o Vite possa indicar).
+
+## 📂 Estrutura do Projeto
+
+*   `src/`
+    *   `App.tsx`: Componente principal da aplicação.
+    *   `main.tsx`: Ponto de entrada da aplicação React.
+    *   `components/`: Contém os componentes reutilizáveis da interface (e.g., `CardOP`, `KanbanColumn`, `Modal`).
+    *   `hooks/`: Ganchos personalizados do React para lógica reutilizável.
+    *   `styles/`: Arquivos de estilo CSS/TailwindCSS.
+    *   `types/`: Definições de tipos TypeScript para os dados da aplicação.
+*   `public/`: Ativos estáticos como imagens e ícones.
+*   `package.json`: Define as dependências do projeto e scripts de execução.
+*   `tsconfig.json`: Configurações do TypeScript para o projeto frontend.
+*   `vite.config.ts`: Configurações do Vite para o projeto.
+
+

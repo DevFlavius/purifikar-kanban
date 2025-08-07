@@ -2,6 +2,7 @@ import express, { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { jsonWithBigInt } from '../utils/json';
+import { omieEtapaMapping, updateOmieOrderStatus } from '../utils/omieApi';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -66,6 +67,25 @@ router.put(
         where: { id: BigInt(id) },
         data: { etapa: Number(etapa) }, // Certifica que é número
       });
+
+      const omieEtapa = omieEtapaMapping[etapaEnum.parse(etapa)];
+
+      if (omieEtapa) {
+        // Busca informações adicionais da OP para enviar à Omie, se necessário
+        const opParaOmie = await prisma.production_orders.findUnique({ where: { id: BigInt(id) } });
+
+        if (opParaOmie) {
+          await updateOmieOrderStatus(
+            opParaOmie.id.toString(),
+            omieEtapa,
+            Number(opParaOmie.id),
+            Number(opParaOmie.id_produto),
+            Number(opParaOmie.quant_total),
+            opParaOmie.dt_previsao ? opParaOmie.dt_previsao.toLocaleDateString("pt-BR") : undefined
+          );
+        }
+      }
+
       res.send(jsonWithBigInt(atualizada));
 
     } catch (error) {
