@@ -15,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({ op, onClose }) => {
         <p><strong>Produto:</strong> {op.nome_produto}</p>
         <p><strong>Código:</strong> {op.cod_produto}</p>
         <p className='modal-content-quantidade'><strong>Quantidade:</strong> {op.quant_total}un</p>
+        <p className='modal-content-opnum'><strong>Observação:</strong> {op.observacao}</p>
         <div className='modal-components'>
           <h3 className='modal-components-title'>Componentes</h3>
           <ul className='modal-components-list'>

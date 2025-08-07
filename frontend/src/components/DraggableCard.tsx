@@ -47,7 +47,7 @@ const DraggableCard: React.FC<DraggableCardProps> = ({ op, onCardClick }) => {
       <p><strong className="production-card-nome">{op.nome_produto}</strong></p>
       <p className="production-card-codigo">OP: {op.op_num}</p>
       <p className="production-card-quantidade">Qtd: {op.quant_total}</p>
-      <p className="production-card-observacao">Observação: {op.observacao || '-'}</p>
+      <p className="production-card-observacao">Observação: {op.observacao}</p>
     </div>
   );
 };
