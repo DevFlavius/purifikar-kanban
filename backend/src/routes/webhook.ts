@@ -68,7 +68,7 @@ router.post(
       let observacao: string | null = null;
       
     try {
-        observacao = await consultarOrdemProducao(input.nCodOP);
+       const observacao = await consultarOrdemProducao(input.nCodOP);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error('Erro ao consultar a ordem de produção na Omie:', input.nCodOP, errorMessage);
