@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Op } from '../types/Op';
@@ -21,12 +21,10 @@ const DraggableCard: React.FC<DraggableCardProps> = ({ op, onCardClick }) => {
     id: op.id.toString(),
   });
 
-  const [mouseDown, setMouseDown] = useState(false);
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: mouseDown ? 'grabbing' : 'grab',
+    cursor: isDragging ? 'grabbing' : 'grab',
     opacity: isDragging ? 0.5 : 1,
   };
 
@@ -37,12 +35,7 @@ const DraggableCard: React.FC<DraggableCardProps> = ({ op, onCardClick }) => {
       {...listeners}
       className="kanban-card"
       style={style}
-      onMouseDown={() => setMouseDown(true)}
-      onMouseUp={() => {
-        if (!isDragging) onCardClick(op);
-        setMouseDown(false);
-      }}
-      onMouseLeave={() => setMouseDown(false)}
+      onClick={() => onCardClick(op)}
     >
       <p><strong className="production-card-nome">{op.nome_produto}</strong></p>
       <p className="production-card-codigo">OP: {op.op_num}</p>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import KanbanColumn from './components/KanbanColumn';
+import DraggableCard from './components/DraggableCard';
 import { useFetchOps } from './hooks/useFetchOps';
 import type { Op } from './types/Op';
 import Header from './components/Header';
@@ -19,8 +20,9 @@ const columns = ['nova', 'a_produzir', 'em_producao', 'acabamento', 'finalizado'
 
 function App() {
   const { ops, setOps } = useFetchOps();
-  const [selectedOp, setSelectedOp] = useState<Op | null>(null);
-  
+  const [modalOp, setModalOp] = useState<Op | null>(null); // Para o modal
+  const [activeDragOp, setActiveDragOp] = useState<Op | null>(null); // Para o drag
+
   const groupedOps: Record<string, Op[]> = {
     nova: [],
     a_produzir: [],
@@ -50,13 +52,32 @@ function App() {
       );
     });
   };
-    console.log('selectedOp:', selectedOp);
+    console.log('selectedOp:', activeDragOp);
+  // Use um delay para distinguir clique de drag
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 80, // ms
+        tolerance: 5,
+      },
+    })
+  );
+
   return (
     <div className="kanban-wrapper">
       <Header />
-      <DndContext onDragEnd={({ active, over }) => {
-        if (over && active.id !== over.id) handleDragEnd(String(active.id), String(over.id));
-      }}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={({ active }) => {
+          const op = ops.find(op => String(op.id) === String(active.id));
+          setActiveDragOp(op || null);
+        }}
+        onDragEnd={({ active, over }) => {
+          setActiveDragOp(null);
+          if (over && active.id !== over.id) handleDragEnd(String(active.id), String(over.id));
+        }}
+        onDragCancel={() => setActiveDragOp(null)}
+      >
         <div className="kanban-columns">
           {columns.map(col => (
             <KanbanColumn
@@ -64,12 +85,17 @@ function App() {
               id={col}
               title={col.replace('_', ' ').toUpperCase()}
               items={groupedOps[col]}
-              onCardClick={setSelectedOp}
+              onCardClick={setModalOp} // Só abre modal em clique
             />
           ))}
         </div>
+        <DragOverlay>
+          {activeDragOp ? (
+            <DraggableCard op={activeDragOp} onCardClick={() => {}} />
+          ) : null}
+        </DragOverlay>
       </DndContext>
-      {selectedOp && <Modal op={selectedOp} onClose={() => setSelectedOp(null)} />}
+      {modalOp && <Modal op={modalOp} onClose={() => setModalOp(null)} />}
     </div>
   );
 

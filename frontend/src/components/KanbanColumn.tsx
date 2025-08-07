@@ -20,12 +20,12 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title, items, onCardCli
       <div className="kanban-column-header">
         <h2 className="kanban-column-title">{title}</h2>
       </div>
-      {/* ENVOLVE os itens com SortableContext */}
       <SortableContext
-        items={items.map(op => op.id.toString())}
+        id={id}
+        items={items.map(item => item.id.toString())}
         strategy={verticalListSortingStrategy}
       >
-        <div className="kanban-items">
+        <div className="kanban-column-cards">
           {items.map(op => (
             <DraggableCard key={op.id} op={op} onCardClick={onCardClick} />
           ))}
