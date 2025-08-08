@@ -1,0 +1,19 @@
+{
+  "name": "purifikar-kanban",
+  "version": "1.0.0",
+  "description": "Sistema Kanban unificado para Purifikar",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "cd backend && npm run dev:unified",
+    "build": "cd backend && npm run build",
+    "start": "cd backend && npm start",
+    "clean": "rm -rf backend/dist && rm -rf frontend/dist"
+  },
+  "keywords": ["kanban", "production", "purifikar"],
+  "author": "Flavio Purifikar",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
