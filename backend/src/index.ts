@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
+import path from 'path';
 import opRouter from './routes/op';
 import webhookRoutes from './routes/webhook';
 
@@ -15,19 +16,36 @@ app.use(cors());
 // Middleware para interpretar JSON no corpo das requisições
 app.use(express.json());
 
-// Rotas da aplicação
+// Rotas da API
 app.use('/op', opRouter);
 app.use('/webhook', webhookRoutes);
 
-// Rota padrão para verificação
-app.get('/', (_, res) => {
+// Rota padrão da API para verificação
+app.get('/api', (_, res) => {
   res.send('API do Painel de Produção está online.');
 });
 
+// Servir arquivos estáticos do frontend
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
+// Fallback para SPA - todas as rotas não-API retornam o index.html
+app.use((req, res, next) => {
+  // Se a rota começar com /api, /op ou /webhook, continuar para próximo middleware
+  if (req.path.startsWith('/api') || req.path.startsWith('/op') || req.path.startsWith('/webhook')) {
+    return next();
+  }
+  
+  // Para todas as outras rotas, servir o index.html
+  res.sendFile(path.join(publicPath, 'index.html'));
+});
+
 // Inicialização do servidor
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+const PORT = parseInt(process.env.PORT || '3001', 10);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor unificado rodando em http://localhost:${PORT}`);
+  console.log(`Frontend disponível em: http://localhost:${PORT}`);
+  console.log(`API disponível em: http://localhost:${PORT}/api`);
 });
 
 // Exemplo de chamada para verificar se o Prisma está funcionando

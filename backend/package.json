@@ -1,12 +1,15 @@
 {
-  "name": "backend",
+  "name": "purifikar-kanban-unified",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd ../frontend && npm run build",
+    "build:backend": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev:unified": "concurrently \"npm run dev\" \"cd ../frontend && npm run dev\""
   },
   "keywords": [],
   "author": "",
@@ -23,10 +26,11 @@
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.30",
+    "concurrently": "^8.2.2",
     "prisma": "^6.8.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
-  "description": ""
+  "description": "Sistema Kanban unificado para Purifikar"
 }

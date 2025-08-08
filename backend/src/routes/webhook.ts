@@ -37,14 +37,15 @@ router.post(
 
       // verifica o tipo de operação e se for de exclusão, remove a ordem de produção
       if (ProdOrdType === "OrdemProducao.Excluida") {
-        console.log('Ordem de produção excluída');
-        await prisma.production_orders.delete({
+        console.log("Ordem de produção excluída");
+        // Usar deleteMany para evitar erro se o registro já não existir
+        await prisma.production_orders.deleteMany({
           where: {
-            id: nCodOp, // valor único
+            id: nCodOp,
           },
         });
-        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-Exclusao', foreign_id: payload.messageid, contexto: 'Exclusão de Ordem de produção', status: IntegrationStatus.SUCESSO });
-        res.status(200).send('Ordem de produção excluída');
+        await atualizarLogIntegracao({ origem: "kanban-PFK-webhook-Exclusao", foreign_id: payload.messageid, contexto: "Exclusão de Ordem de produção", status: IntegrationStatus.SUCESSO });
+        res.status(200).send("Ordem de produção excluída");
         return;
       }
       
@@ -71,8 +72,18 @@ router.post(
        observacao = await consultarOrdemProducao(input.nCodOP);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('Erro ao consultar a ordem de produção na Omie:', input.nCodOP, errorMessage);
-      await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-inativo', foreign_id: payload.messageid, contexto: 'Observação não encontrada', status: IntegrationStatus.SUCESSO });
+      console.error("Erro ao consultar a ordem de produção na Omie:", input.nCodOP, errorMessage);
+
+      // Verifica se o erro é devido à OP não cadastrada na Omie
+      if (errorMessage.includes("Ordem de Produção não cadastrada")) {
+        await atualizarLogIntegracao({ origem: "kanban-PFK-webhook-OmieNotFound", foreign_id: payload.messageid, contexto: "OP não encontrada na Omie", status: IntegrationStatus.ERRO });
+        res.status(200).send("OP não encontrada na Omie, ignorando."); // Retorna 200 para Omie não tentar novamente
+        return; // Interrompe o processamento do webhook
+      }
+
+      await atualizarLogIntegracao({ origem: "kanban-PFK-webhook-ErroOmie", foreign_id: payload.messageid, contexto: "Erro ao consultar Omie", status: IntegrationStatus.ERRO });
+      res.status(500).json({ erro: "Erro ao consultar Omie" });
+      return; // Interrompe o processamento do webhook
     }
   
       const dataFormatada = formatarData(input.dDtPrevisao);
