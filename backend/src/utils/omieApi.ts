@@ -19,35 +19,41 @@ interface OmieUpsertRequestPayload {
         nCodProduto?: number; // Código do produto
         nQtde?: number; // Quantidade a produzir
         dDtPrevisao?: string; // Data de previsão
-      };
-      info?: {
-        cEtapa?: string; // Etapa da Ordem de Produção
+        cCodStatus?: string; // Status da OP
       };
     };
   }>;
 }
 
-export async function updateOmieOrderStatus(opId: string, omieStatus: string, nCodOP?: number, nCodProduto?: number, nQtde?: number, dDtPrevisao?: string): Promise<any> {
-  if (!OMIE_APP_KEY || !OMIE_APP_SECRET) {
-    throw new Error('OMIE_APP_KEY and OMIE_APP_SECRET must be defined in environment variables.');
-  }
+export async function updateOmieOrderStatus(
+  opId: string,
+  omieStatus: string,
+  nCodOP?: number,
+  nCodProduto?: number,
+  nQtde?: number,
+  dDtPrevisao?: string
+): Promise<any> {
+  const mappedStatus = omieEtapaMapping[omieStatus] || omieStatus;
 
   const payload: OmieUpsertRequestPayload = {
     call: 'UpsertOrdemProducao',
-    app_key: OMIE_APP_KEY,
-    app_secret: OMIE_APP_SECRET,
+    app_key: OMIE_APP_KEY!,
+    app_secret: OMIE_APP_SECRET!,
     param: [
       {
         copUpsertRequest: {
           identificacao: {
             cCodIntOP: opId,
-          },
-          info: {
-            cEtapa: omieStatus,
-          },
-        },
-      },
-    ],
+            // Inclui apenas os campos válidos diretamente aqui:
+            ...(nCodOP !== undefined && { nCodOP }),
+            ...(nCodProduto !== undefined && { nCodProduto }),
+            ...(nQtde !== undefined && { nQtde }),
+            ...(dDtPrevisao !== undefined && { dDtPrevisao }),
+            // E se quiser registrar o status, use como comentário ou log, não dentro do payload
+          }
+        }
+      }
+    ]
   };
 
   // Adiciona campos opcionais se fornecidos
@@ -73,10 +79,11 @@ export async function updateOmieOrderStatus(opId: string, omieStatus: string, nC
 
 // Mapeamento de etapas do Kanban para códigos Omie
 export const omieEtapaMapping: { [key: string]: string } = {
-  'nova': '10',
-  'a_produzir': '15', // Omie não usa, mas mantemos para consistência
-  'em_producao': '20',
-  'acabamento': '30',
-  'finalizado': '60',
+  '10': 'nova',
+  '15': 'a_produzir',
+  '20': 'em_producao',
+  '30': 'acabamento',
+  '60': 'finalizado',
 };
+
 
