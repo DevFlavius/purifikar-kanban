@@ -2,7 +2,7 @@ import express, { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { jsonWithBigInt } from '../utils/json';
-import { omieEtapaMapping, updateOmieOrderStatus, } from '../utils/omieApi';
+import { updateOmieOrderStatus, } from '../utils/omieApi';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -60,31 +60,26 @@ router.put(
   '/:id',
   async (req: Request<Params, {}, Body>, res: Response) => {
     try {
-      const { etapa } = req.body;
-      const { id } = req.params;
+    const { etapa } = req.body;
+    const { id } = req.params;
 
+    const atualizada = await prisma.production_orders.update({
+      where: { id: BigInt(id) },
+      data: { etapa: Number(etapa) }, // O banco de dados espera um número
+    });
 
-      const atualizada = await prisma.production_orders.update({
-        where: { id: BigInt(id) },
-        data: { etapa: Number(etapa) }, // Certifica que é número
-      });
+    // Busca informações da OP para enviar à Omie
+    const opParaOmie = await prisma.production_orders.findUnique({
+      where: { id: BigInt(id) },
+    });
 
-     
-        // Busca informações adicionais da OP para enviar à Omie, se necessário
-        const opParaOmie = await prisma.production_orders.findUnique({ where: { id: BigInt(id) } });
-
-        if (opParaOmie) {
-          await updateOmieOrderStatus(
-            opParaOmie.id.toString(),
-            String(etapa),
-            Number(opParaOmie.id),
-            Number(opParaOmie.id_produto),
-            Number(opParaOmie.quant_total),
-            opParaOmie.dt_previsao ? opParaOmie.dt_previsao.toLocaleDateString("pt-BR") : undefined
-          );
-        }
-
-
+    if (opParaOmie) {
+      // Chamada da função atualizada, passando apenas os parâmetros necessários
+      await updateOmieOrderStatus(
+        opParaOmie.id.toString(), // nCodOP
+        etapa.toString(), // cEtapa
+      );
+    }
       res.send(jsonWithBigInt(atualizada));
 
     } catch (error) {
