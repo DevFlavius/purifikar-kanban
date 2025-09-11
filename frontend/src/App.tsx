@@ -39,8 +39,8 @@ function App() {
   const handleDragEnd = (opId: string, newStatus: string) => {
     const etapaCode = Object.keys(statusNames).find(key => statusNames[key] === newStatus);
     if (!etapaCode) return;
-
-    fetch(`http://localhost:3001/op/${opId}`, {
+     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    fetch(`${apiUrl}/op/${opId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ etapa: etapaCode })

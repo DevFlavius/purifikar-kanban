@@ -60,26 +60,30 @@ router.put(
   '/:id',
   async (req: Request<Params, {}, Body>, res: Response) => {
     try {
-    const { etapa } = req.body;
-    const { id } = req.params;
+      const { etapa } = req.body;
+      const { id } = req.params;
 
-    const atualizada = await prisma.production_orders.update({
-      where: { id: BigInt(id) },
-      data: { etapa: Number(etapa) }, // O banco de dados espera um número
-    });
 
-    // Busca informações da OP para enviar à Omie
-    const opParaOmie = await prisma.production_orders.findUnique({
-      where: { id: BigInt(id) },
-    });
 
-    if (opParaOmie) {
-      // Chamada da função atualizada, passando apenas os parâmetros necessários
-      await updateOmieOrderStatus(
-        opParaOmie.id.toString(), // nCodOP
-        etapa.toString(), // cEtapa
-      );
-    }
+      // Busca informações da OP para enviar à Omie
+      const opParaOmie = await prisma.production_orders.findUnique({
+        where: { id: BigInt(id) },
+      });
+
+      if (opParaOmie) {
+        // Chamada da função atualizada, passando apenas os parâmetros necessários
+        console.log('Etapa enviada para Omie:', etapa);
+        await updateOmieOrderStatus(
+          opParaOmie.id.toString(), // nCodOP
+          etapa.toString(), // cEtapa
+        );
+      }
+
+      const atualizada = await prisma.production_orders.update({
+        where: { id: BigInt(id) },
+        data: { etapa: Number(etapa) }, // O banco de dados espera um número
+      });
+
       res.send(jsonWithBigInt(atualizada));
 
     } catch (error) {
