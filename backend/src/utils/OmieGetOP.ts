@@ -9,7 +9,13 @@ const OMIE_API_URL = 'https://app.omie.com.br/api/v1/produtos/op/';
  * @param nCodOP - O código da Ordem de Produção a ser consultada.
  * @returns A string contendo a observação (cObs) da OP ou null se não for encontrada.
  */
-export async function consultarOrdemProducao(nCodOP: number): Promise<string | null> {
+
+export interface OrdemProducaoInfo {
+  cObs: string;
+  nQtde: number;
+}
+
+export async function consultarOrdemProducao(nCodOP: number): Promise<OrdemProducaoInfo | null> {
   try {
     const response = await axios.post(OMIE_API_URL, {
       call: 'ConsultarOrdemProducao',
@@ -18,14 +24,14 @@ export async function consultarOrdemProducao(nCodOP: number): Promise<string | n
       param: [{ nCodOP }],
     });
 
-    // A resposta da Omie costuma vir com os dados que precisamos
-    if (response.data && response.data.observacoes.cObs) {
-      console.log(`Observação encontrada para OP ${nCodOP}: ${response.data.observacoes.cObs}`);
-      return response.data.observacoes.cObs;
+    if (response.data && response.data.observacoes?.cObs) {
+      return {
+        cObs: response.data.observacoes.cObs,
+        nQtde: response.data.identificacao.nQtde,
+      };
     }
 
     return null;
-
   } catch (error) {
     console.error(`Erro ao consultar OP ${nCodOP} na Omie:`, error);
     // Você pode querer registrar esse erro de forma mais robusta

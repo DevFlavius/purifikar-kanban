@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { formatarData } from '../utils/produtos';
 import { PrismaClient, IntegrationStatus } from '@prisma/client';
 import { atualizarLogIntegracao, criarLogIntegracao } from '../utils/log-register'
-import { consultarOrdemProducao } from '../utils/OmieGetObs';
+import { consultarOrdemProducao, OrdemProducaoInfo } from '../utils/OmieGetOP';
 import { getOmieProductStructure } from '../utils/omieProductStructure';
 
 const prisma = new PrismaClient();
@@ -112,10 +112,10 @@ router.post(
         return;
       }
       
-      let observacao: string | null = null;
+     let getOp: OrdemProducaoInfo | null = null;
       
     try {
-       observacao = await consultarOrdemProducao(input.nCodOP);
+       getOp = await consultarOrdemProducao(input.nCodOP);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("Erro ao consultar a ordem de produção na Omie:", input.nCodOP, errorMessage);
@@ -143,10 +143,10 @@ router.post(
         cod_produto: omieProduct.ident.codProduto,
         nome_produto: omieProduct.ident.descrProduto,
         etapa: Number(input.cEtapa),
-        quant_total: Number(input.nQtde ?? 1),
+        quant_total: Number(getOp?.nQtde ?? 1),
         op_num: input.cNumOP,
         dt_previsao: dt_previsao_final,
-        observacao: observacao || '',
+        observacao: getOp?.cObs || '',
         componentes:
           omieProduct.itens.map(item => ({
             nome: item.descrProdMalha,
