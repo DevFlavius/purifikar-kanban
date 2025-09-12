@@ -99,7 +99,8 @@ router.post(
         "PRD00274",
         "PRD00275",
         "PRD00276",
-        "ST05-S-I-D"
+        "ST05-S-I-D",
+        "WC-ST05-S-I-D",
       ];
       
       // verifica se o produto está ativo, filtro de produtos inativos

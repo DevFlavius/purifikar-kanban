@@ -52,7 +52,7 @@ interface OmieProductStructureResponse {
   }>;
 }
 
-export async function getOmieProductStructure(productId: string): Promise<OmieProductStructureResponse | null> {
+export async function getOmieProductStructure(productId: number): Promise<OmieProductStructureResponse | null> {
   const OMIE_API_URL = 'https://app.omie.com.br/api/v1/geral/malha/';
   const APP_KEY = process.env.OMIE_APP_KEY;
   const APP_SECRET = process.env.OMIE_APP_SECRET;
@@ -67,7 +67,7 @@ export async function getOmieProductStructure(productId: string): Promise<OmiePr
     app_key: APP_KEY,
     app_secret: APP_SECRET,
     param: [{
-      codProduto: productId
+      idProduto: productId
     }]
   };
 
