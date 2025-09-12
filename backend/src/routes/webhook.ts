@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express';
-import { produtos, formatarData } from '../utils/produtos';
+import { formatarData } from '../utils/produtos';
 import { PrismaClient, IntegrationStatus } from '@prisma/client';
 import { atualizarLogIntegracao, criarLogIntegracao } from '../utils/log-register'
 import { consultarOrdemProducao } from '../utils/OmieGetObs';
-import { string } from 'zod';
+import { getOmieProductStructure } from '../utils/omieProductStructure';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -22,10 +22,9 @@ router.post(
       const ProdOrdType = payload.topic;
       console.log('message id', req.body.messageId);
 
-      //Procura o produto nos mapping de produtos, com base no código do produto
-      const produto = produtos.mapping.find(p => p.ident.idProduto === codProduto);
-      //define o codigo do produto pelo ID do produto encontrado
-      const codProdutoRecebido = produto?.ident.codProduto;
+    //Procura o produto na API da Omie com base no código do produto
+    const omieProduct = await getOmieProductStructure(codProduto);
+    const codProdutoRecebido = omieProduct?.ident.codProduto;
 
       await criarLogIntegracao({
         origem: 'kanban-PFK-webhook',
@@ -48,20 +47,66 @@ router.post(
         res.status(200).send("Ordem de produção excluída");
         return;
       }
+
+      const allowedProductCodes = [
+        "FIL-WD-ST",
+        "FIL-WD-SL",
+        "WC-ST04-T-B-D",
+        "WC-ST04-S-B-E",
+        "WC-ST04-T-B-E",
+        "WC-SL01-S-B-D",
+        "WC-SL-TM-DR",
+        "WC-ST04-S-I-D",
+        "WC-ST04-D-I-D",
+        "WC-ST04-D-I-E",
+        "WC-ST04-D-B-D",
+        "WC-ST04-D-B-E",
+        "WC-ST04-S-I-E",
+        "WC-ST04-T-I-D",
+        "WC-ST04-T-I-E",
+        "WC-SL01-S-B-E",
+        "WC-SL01-T-B-E",
+        "WC-ST04-S-B-D-HU",
+        "WC-ST04-S-B-D",
+        "WC-ST04-S-B-E-H",
+        "WC-ST04-S-I-D-H",
+        "WC-ST04-S-I-E-H",
+        "WC-ST04-S-B-E-HU",
+        "WC-ST04-S-I-D-HU",
+        "WC-ST04-S-I-E-HU",
+        "WC-ST04-T-B-D-H",
+        "WC-ST04-T-B-E-H",
+        "WC-ST04-T-B-E-HU",
+        "WC-ST04-T-B-D-HU",
+        "WC-ST04-T-I-D-HPC",
+        "WC-ST04-T-I-E-H",
+        "WC-ST04-T-I-D-HU",
+        "WC-ST04-T-I-E-HU",
+        "WC-SL01-D-B-E",
+        "WC-SL01-D-B-D",
+        "WC SP",
+        "3103",
+        "WC-ST04-S-P-D",
+        "WC-ST04-S-P-E",
+        "PRD00259",
+        "PRD00262",
+        "PRD00263",
+        "PRD00269",
+        "PRD00270",
+        "PRD00271",
+        "PRD00272",
+        "PRD00273",
+        "PRD00274",
+        "PRD00275",
+        "PRD00276",
+        "ST05-S-I-D"
+      ];
       
       // verifica se o produto está ativo, filtro de produtos inativos
-      if (!produtos.ativo.includes(String(codProdutoRecebido))) {
-        console.log('Produto inativo, ignorando...');
-        console.log(codProdutoRecebido);
-        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-inativo', foreign_id: payload.messageid, contexto: 'Produto inativo, ignorando...', status: IntegrationStatus.SUCESSO });
-        res.status(200).send('Produto inativo');
-        return;
-      }
-      
-      // verifica se o produto está mapeado, se não estiver, retorna 204
-      if (!produto) {
-        console.log('Produto não mapeado:', codProduto);
-        await atualizarLogIntegracao({ origem: 'kanban-PFK-webhook-NaoMapeado', foreign_id: payload.messageid, contexto: 'produto não mapeado', status: IntegrationStatus.ERRO });
+      // verifica se o produto foi encontrado na Omie, se não, retorna 204
+      if (!omieProduct || !allowedProductCodes.includes(omieProduct.ident.codProduto)) {
+        console.log("Produto não mapeado ou não permitido:", codProduto);
+        await atualizarLogIntegracao({ origem: "kanban-PFK-webhook-NaoMapeadoOuNaoPermitido", foreign_id: payload.messageid, contexto: "Produto não mapeado ou não permitido", status: IntegrationStatus.ERRO });
         res.status(204).send();
         return;
       }
@@ -93,21 +138,20 @@ router.post(
       // formata os dados para salvar no banco
       const dadosFormatados = {
         id: Number(input.nCodOP),
-        id_produto: produto.ident.idProduto,
-        cod_produto: produto.ident.codProduto,
-        nome_produto: produto.ident.descrProduto,
+        id_produto: omieProduct.ident.idProduto,
+        cod_produto: omieProduct.ident.codProduto,
+        nome_produto: omieProduct.ident.descrProduto,
         etapa: Number(input.cEtapa),
         quant_total: Number(input.nQtde ?? 1),
         op_num: input.cNumOP,
         dt_previsao: dt_previsao_final,
         observacao: observacao || '',
         componentes:
-          produto.itens.map(item => ({
+          omieProduct.itens.map(item => ({
             nome: item.descrProdMalha,
             unidade: item.unidProdMalha,
             quantidade: item.quantProdMalha
           }))
-        
       };
 
       //inclui ou atualiza a ordem de produção no banco
