@@ -1,3 +1,4 @@
+
 .kanban-wrapper {
   display: flex;
   flex-direction: column;
@@ -50,22 +51,21 @@
   font-size: 1.125rem;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 1rem;
-  
+  margin: 0; /* Remove margens padrão do h2 */
+  padding: 0; /* Remove paddings padrão do h2 */
 }
 
 .kanban-column-header {
   background: linear-gradient(to right, #000000, #333333);
-  padding: 10px;
+  padding: 0 15px; /* Removendo padding vertical para que align-items: center funcione melhor */
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;    
   width: 250px;
   height: 50px;
-  padding-bottom: 0.5rem;
   
-  justify-content: center;
+  justify-content: space-between;
   display: flex;
   align-items: center;
 }
@@ -111,4 +111,157 @@
   color: #dc2626; 
   font-weight: bold;
   margin-top: 0.25rem;
+}
+
+
+/* Novos estilos para melhorar o drag and drop */
+
+.kanban-column-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin: 0; /* Remove margens padrão */
+}
+
+.kanban-column-over {
+  background-color: #f0f9ff;
+  border: 2px dashed #3b82f6;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+.kanban-column-cards {
+  width: 100%;
+  min-height: 200px;
+  padding: 0.5rem 0;
+}
+
+.kanban-column-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+}
+
+.kanban-card {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.kanban-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.kanban-card-dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.kanban-card-overlay {
+  transform: rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  background-color: #ffffff;
+  border: 2px solid #3b82f6;
+}
+
+/* Prevenir seleção de texto durante drag */
+.kanban-wrapper * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Permitir seleção de texto no modal */
+.modal * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Animações suaves */
+.kanban-card {
+  transition: all 0.2s ease;
+}
+
+.kanban-column {
+  transition: all 0.2s ease;
+}
+
+/* Estados de foco para acessibilidade */
+.kanban-card:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.kanban-card:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+
+/* Estilos para loading e erro */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-container p {
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.error-container p {
+  font-size: 1rem;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.error-container p:last-child {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+
+/* Banner de erro/aviso */
+.error-banner {
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  padding: 0.75rem 1rem;
+  margin: 1rem 2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.error-banner p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+
+.kanban-column-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
