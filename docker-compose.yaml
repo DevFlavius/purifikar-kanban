@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: purifikar-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: "postgresql://ainbidev:4!nb1deV@db:5432/postgres"
+      OMIE_APP_KEY: "2020762645902"
+      OMIE_APP_SECRET: "ad0b4483ed611c9b9211130589773228"
+      PORT: 3001
+    networks:
+      - network_public
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://backend:3001
+    container_name: purifikar-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - network_public
+
+networks:
+  network_public:
+    external: true
+    name: network_public

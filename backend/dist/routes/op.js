@@ -47,18 +47,20 @@ router.put('/:id', async (req, res) => {
     try {
         const { etapa } = req.body;
         const { id } = req.params;
+        // Busca informações da OP para enviar à Omie
+        const opParaOmie = await prisma.production_orders.findUnique({
+            where: { id: BigInt(id) },
+        });
+        if (opParaOmie) {
+            // Chamada da função atualizada, passando apenas os parâmetros necessários
+            console.log('Etapa enviada para Omie:', etapa);
+            await (0, omieApi_1.updateOmieOrderStatus)(opParaOmie.id.toString(), // nCodOP
+            etapa.toString());
+        }
         const atualizada = await prisma.production_orders.update({
             where: { id: BigInt(id) },
-            data: { etapa: Number(etapa) }, // Certifica que é número
+            data: { etapa: Number(etapa) }, // O banco de dados espera um número
         });
-        const omieEtapa = omieApi_1.omieEtapaMapping[etapaEnum.parse(etapa)];
-        if (omieEtapa) {
-            // Busca informações adicionais da OP para enviar à Omie, se necessário
-            const opParaOmie = await prisma.production_orders.findUnique({ where: { id: BigInt(id) } });
-            if (opParaOmie) {
-                await (0, omieApi_1.updateOmieOrderStatus)(opParaOmie.id.toString(), omieEtapa, Number(opParaOmie.id), Number(opParaOmie.id_produto), Number(opParaOmie.quant_total), opParaOmie.dt_previsao ? opParaOmie.dt_previsao.toLocaleDateString("pt-BR") : undefined);
-            }
-        }
         res.send((0, json_1.jsonWithBigInt)(atualizada));
     }
     catch (error) {
